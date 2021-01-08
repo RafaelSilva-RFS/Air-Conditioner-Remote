@@ -1,0 +1,7 @@
+# Datatypes (KEYWORD1) - Tipos de Dados
+
+# Methods and Functions (KEYWORD2) - Métodos e Funções
+AirConditionerState	KEYWORD2
+
+# Constants (LITERAL1) - Constantes
+
