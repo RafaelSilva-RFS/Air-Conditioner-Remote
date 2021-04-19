@@ -1,0 +1,31 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "C:/Program Files (x86)/Arduino/libraries/**",
+                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/cores/arduino",
+                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/cores/arduino/**",
+                "C:/Program Files (x86)/Arduino/hardware/tools/avr/avr/include/**",
+                "C:/Program Files (x86)/Arduino/hardware/tools/avr/lib/gcc/avr/7.3.0/include/**",
+                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/variants/standard/**",
+                //"C:/Users/Rafael/.platformio/packages/framework-arduinoavr/**",
+                "C:/Users/Rafael/Documents/Arduino/libraries/**"
+                //"{$workspaceFolder}/libraries/**",
+                //"{$workspaceFolder}/**"
+                //"C:/Program Files (x86)/Arduino",
+            ],
+            "defines": [
+                "USBCON"
+                //"_DEBUG",
+                //"UNICODE",
+                //"_UNICODE"
+            ],
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "msvc-x64",
+            "compilerPath": ""
+        }
+    ],
+    "version": 4
+}

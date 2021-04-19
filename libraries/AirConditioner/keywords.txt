@@ -1,7 +1,9 @@
 # Datatypes (KEYWORD1) - Tipos de Dados
+AirConditionerState	KEYWORD2
+AirConditionerRemote	KEYWORD2
 
 # Methods and Functions (KEYWORD2) - Métodos e Funções
-AirConditionerState	KEYWORD2
+LigaDesliga		KEYWORD2
 
 # Constants (LITERAL1) - Constantes
 
