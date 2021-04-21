@@ -7,6 +7,7 @@
 #include "Wire.h"
 #include "Adafruit_GFX.h"
 #include "Adafruit_SSD1306.h"
+#include "AirConditionerEstateModel.h"
 
 // Global icon variables
 static const unsigned char PROGMEM autoIcon[] = {0x00,0x00,0x3c,0x3c,0x42,0x42,0x41,0x82,0x42,0x42,0x44,0x22,0x28,0x14,0x11,0x88,0x11,0x88,0x28,0x14,0x44,0x22,0x42,0x42,0x41,0x82,0x42,0x42,0x3c,0x3c,0x00,0x00};
@@ -24,11 +25,11 @@ static const unsigned char PROGMEM sleepOnIcon []={0x00,0x00,0x03,0xc0,0x0f,0xf0
 class AirConditionerDisplay {
     public:       
         AirConditionerDisplay();
-        void Init(Adafruit_SSD1306 _display, int ParametrosDto[7]); // Ligado, ForcaVentilador, Temperatura, ModoTrabalho, TempoTimer, TipoGraus, Timer
-        void DisplayUpdate(int ParametrosDto[7]); // Ligado, ForcaVentilador, Temperatura, ModoTrabalho, TempoTimer, TipoGraus, Timer
+        void Init(Adafruit_SSD1306 _display, AirConditionerEstateModel AirConditionerEstateDto); // Ligado, ForcaVentilador, Temperatura, ModoTrabalho, TempoTimer, TipoGraus, Timer        
         void DrawClock(int hour, int min);
+        void DisplayUpdate(AirConditionerEstateModel AirConditionerEstateDto); // Ligado, ForcaVentilador, Temperatura, ModoTrabalho, TempoTimer, TipoGraus, Timer
 
-        Adafruit_SSD1306 display; 
+        Adafruit_SSD1306 display;     
 
     private:        
         void DrawCentreString(const String &buf, int x, int y);
@@ -46,7 +47,7 @@ class AirConditionerDisplay {
 
         String TemperatureFahrenheit[29] = {"61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73", "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85", "86", "87", "88", "89"};
         String TemperatureCelsius[29] = {"16.1", "16.7", "17.2", "17.8", "18.3", "18.9", "19.4", "20.0", "20.6", "21.1", "21.7", "22.2", "22.8", "23.3", "23.9", "24.4", "25.0", "25.6", "26.1", "26.7", "27.2", "27.8", "28.3", "28.9", "29.4", "30", "30.6", "31.1", "31.7"};
-        int ParametrosAnterioresDto[7]; // Ligado, ForcaVentilador, Temperatura, ModoTrabalho, TempoTimer, TipoGraus, Timer
+        AirConditionerEstateModel AirConditionerPreviousEstateDto;
         String sleepHours;
         String clockHours;
 };

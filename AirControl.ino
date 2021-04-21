@@ -76,7 +76,8 @@ void setup() {
   receptorIR.enableIRIn();  
 
    // Inicia Funções Ar Condicionado - Parametros de Estado Default
-  arCondicionado.Init(3, 14, 1, 0, 1, 0);
+  //arCondicionado.Init(3, 14, 1, 0, 1, 0);
+  arCondicionado.Init();
 
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
@@ -85,13 +86,13 @@ void setup() {
   }   
 
   // Inicia Display Ar Condicionado - Parametros de Estado Default
-  arCondicionadoDisplay.Init(display, arCondicionado.ParametrosDto);  
+  arCondicionadoDisplay.Init(display, arCondicionado.AirConditionerEstateDto);  
 
   // Inicia relógio zerado e passa para o display
   setTime(00,00,00,6,12,1990);  
   arCondicionadoDisplay.DrawClock(hour(), minute());
 
- 
+  Serial.println(" "); 
   Serial.println("Setup Concluído"); 
   Serial.println(" ------ ");  
 }
@@ -120,9 +121,9 @@ void loop() {
 
   if (botaoLigaDesliga.pressed()) {
     arCondicionado.LigaDesliga();
-    arCondicionadoDisplay.DisplayUpdate(arCondicionado.ParametrosDto);  
+    arCondicionadoDisplay.DisplayUpdate(arCondicionado.AirConditionerEstateDto);  
 
-    if(arCondicionado.ParametrosDto[0] == 1) {
+    if(arCondicionado.AirConditionerEstateDto.OnOff == 1) {
       arCondicionadoDisplay.DrawClock(hour(), minute());
     }
   }
@@ -135,33 +136,33 @@ void loop() {
   if(mudarSleepAtivo){
     if (botaoMais.pressed()){
       arCondicionado.AlteraTempoTimerAumentar();  
-      arCondicionadoDisplay.DisplayUpdate(arCondicionado.ParametrosDto);  
+      arCondicionadoDisplay.DisplayUpdate(arCondicionado.AirConditionerEstateDto);  
     }    
     if (botaoMenos.pressed()){
       arCondicionado.AlteraTempoTimerDiminuir();  
-      arCondicionadoDisplay.DisplayUpdate(arCondicionado.ParametrosDto);  
+      arCondicionadoDisplay.DisplayUpdate(arCondicionado.AirConditionerEstateDto);  
     }
   }
   
   if (botaoModoTrabalho.pressed() && !mudarClockAtivo && !mudarSleepAtivo) {
     arCondicionado.AlteraModoTrabalho();  
-    arCondicionadoDisplay.DisplayUpdate(arCondicionado.ParametrosDto); 
+    arCondicionadoDisplay.DisplayUpdate(arCondicionado.AirConditionerEstateDto); 
   }
   if (botaoVentilador.pressed() && !mudarClockAtivo && !mudarSleepAtivo) {
     arCondicionado.AlteraForcaVentilador();  
-    arCondicionadoDisplay.DisplayUpdate(arCondicionado.ParametrosDto);
+    arCondicionadoDisplay.DisplayUpdate(arCondicionado.AirConditionerEstateDto);
   }
   if (botaoModoTemperatura.pressed() && !mudarClockAtivo && !mudarSleepAtivo) {
     arCondicionado.AlteraTipoGraus();
-    arCondicionadoDisplay.DisplayUpdate(arCondicionado.ParametrosDto);
+    arCondicionadoDisplay.DisplayUpdate(arCondicionado.AirConditionerEstateDto);
   }
   if (botaoMais.pressed() && !mudarClockAtivo && !mudarSleepAtivo) {
     arCondicionado.AlteraTemperaturaAumentar();   
-    arCondicionadoDisplay.DisplayUpdate(arCondicionado.ParametrosDto);
+    arCondicionadoDisplay.DisplayUpdate(arCondicionado.AirConditionerEstateDto);
   }
   if (botaoMenos.pressed() && !mudarClockAtivo && !mudarSleepAtivo) {
     arCondicionado.AlteraTemperaturaDiminuir();   
-    arCondicionadoDisplay.DisplayUpdate(arCondicionado.ParametrosDto);
+    arCondicionadoDisplay.DisplayUpdate(arCondicionado.AirConditionerEstateDto);
   }
 
   // LAÇO PARA LEITURA DO RECEPTOR IR QUANDO FOR PRESSIONADO O BOTÃO ------------------------------
@@ -193,52 +194,56 @@ void loop() {
       case 'z':
       { 
         arCondicionado.AlteraTemperaturaAumentar();   
-        arCondicionadoDisplay.DisplayUpdate(arCondicionado.ParametrosDto);
+        arCondicionadoDisplay.DisplayUpdate(arCondicionado.AirConditionerEstateDto);
+        arCondicionado.PrintEstadoAtual(); 
         break;
       } 
       case 'x':
       {
         arCondicionado.AlteraTemperaturaDiminuir();   
-        arCondicionadoDisplay.DisplayUpdate(arCondicionado.ParametrosDto);
-        //arCondicionado.PrintEstadoAtual();   
+        arCondicionadoDisplay.DisplayUpdate(arCondicionado.AirConditionerEstateDto);
+        arCondicionado.PrintEstadoAtual();   
         break;
       } 
       case 'c':
       {
         arCondicionado.AlteraTipoGraus();
-        arCondicionadoDisplay.DisplayUpdate(arCondicionado.ParametrosDto);
+        arCondicionadoDisplay.DisplayUpdate(arCondicionado.AirConditionerEstateDto);
+        arCondicionado.PrintEstadoAtual(); 
         break;
       }   
       case 'v':
       {
         arCondicionado.AlteraModoTrabalho();  
-        arCondicionadoDisplay.DisplayUpdate(arCondicionado.ParametrosDto);  
+        arCondicionadoDisplay.DisplayUpdate(arCondicionado.AirConditionerEstateDto);  
         break;
       } 
       case 'b':
       {
         arCondicionado.AlteraForcaVentilador();  
-        arCondicionadoDisplay.DisplayUpdate(arCondicionado.ParametrosDto);  
+        arCondicionadoDisplay.DisplayUpdate(arCondicionado.AirConditionerEstateDto);  
+        arCondicionado.PrintEstadoAtual(); 
         break;
       } 
       case 'n':
       {
         arCondicionado.AlteraTempoTimerAumentar();  
-        arCondicionadoDisplay.DisplayUpdate(arCondicionado.ParametrosDto);  
-        //arCondicionado.PrintEstadoAtual();
+        arCondicionadoDisplay.DisplayUpdate(arCondicionado.AirConditionerEstateDto);  
+        arCondicionado.PrintEstadoAtual(); 
         break;
       }       
       case 'm':
       {
         arCondicionado.AlteraTempoTimerDiminuir();  
-        arCondicionadoDisplay.DisplayUpdate(arCondicionado.ParametrosDto);  
-        //arCondicionado.PrintEstadoAtual();
+        arCondicionadoDisplay.DisplayUpdate(arCondicionado.AirConditionerEstateDto);  
+        arCondicionado.PrintEstadoAtual(); 
         break;
       } 
       case 'q':
       {
         arCondicionado.LigaDesliga();
-        arCondicionadoDisplay.DisplayUpdate(arCondicionado.ParametrosDto);  
+        arCondicionadoDisplay.DisplayUpdate(arCondicionado.AirConditionerEstateDto);  
+        arCondicionado.PrintEstadoAtual(); 
         break;
       } 
       

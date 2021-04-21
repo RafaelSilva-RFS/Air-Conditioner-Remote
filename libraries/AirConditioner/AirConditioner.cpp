@@ -4,15 +4,16 @@
 
 AirConditioner::AirConditioner(){ };
 
-void AirConditioner::Init(int forcaVentilador, int temperatura, int modoTrabalho, int tempoTimer, int tipoGraus, int timer)
+// void AirConditioner::Init(int forcaVentilador, int temperatura, int modoTrabalho, int tempoTimer, int tipoGraus, int timer)
+void AirConditioner::Init()
 {
-    ForcaVentilador = forcaVentilador;
-    Temperatura = temperatura;
-    ModoTrabalho = modoTrabalho;
-    TempoTimer = tempoTimer;
-    TipoGraus = tipoGraus;
-    Timer = timer;
-    EndProtocol = 12;
+    AirConditionerEstateViewModel.OnOff = 1;
+    AirConditionerEstateViewModel.FanMode = 3; // ForcaVentilador
+    AirConditionerEstateViewModel.Degrees = 14; // Temperatura
+    AirConditionerEstateViewModel.CoolMode = 1; // ModoTrabalho
+    AirConditionerEstateViewModel.SleepClock = 0; // TempoTimer
+    AirConditionerEstateViewModel.DegreesMode = 1; // TipoGraus
+    AirConditionerEstateViewModel.SleepOnOff = 0; // Timer
 
     SetParametrosDto();
 
@@ -24,39 +25,39 @@ void AirConditioner::PrintEstadoAtual()
     Serial.println("Estado Atual");
 
     Serial.print("Ligado: ");
-    Serial.println(Ligado);
+    Serial.println(AirConditionerEstateViewModel.OnOff);
 
     Serial.print("Força Ventilador: ");
-    Serial.print(ForcaVentilador);
+    Serial.print(AirConditionerEstateViewModel.FanMode);
     Serial.print(" .. Bin: ");
-    Serial.println(ForcaVentiladorCodes[ForcaVentilador]);
+    Serial.println(ForcaVentiladorCodes[AirConditionerEstateViewModel.FanMode]);
 
     Serial.print("Temperatura: ");
-    Serial.print(Temperatura);
+    Serial.print(AirConditionerEstateViewModel.Degrees);
     Serial.print(" ...... Bin: ");
-    Serial.println(TemperaturaCodes[Temperatura]);
+    Serial.println(TemperaturaCodes[AirConditionerEstateViewModel.Degrees]);
 
     Serial.print("Modo Trabalho: ");
-    Serial.print(ModoTrabalho);
+    Serial.print(AirConditionerEstateViewModel.CoolMode);
     Serial.print(" ..... Bin: ");
-    Serial.println(ModoTrabalhoCodes[ModoTrabalho]);
+    Serial.println(ModoTrabalhoCodes[AirConditionerEstateViewModel.CoolMode]);
 
     Serial.print("Tempo Timer: ");
-    Serial.print(TempoTimer);
+    Serial.print(AirConditionerEstateViewModel.SleepClock);
     Serial.print(" ....... Bin: ");
-    Serial.print(TempoTimerCodes[TempoTimer]);
+    Serial.print(TempoTimerCodes[AirConditionerEstateViewModel.SleepClock]);
     Serial.println("");
 
     Serial.print("Tipo Graus: ");
-    Serial.print(TipoGraus);
+    Serial.print(AirConditionerEstateViewModel.DegreesMode);
     Serial.print(" ........ Bin: ");
-    Serial.print(TipoGrausCodes[TipoGraus]);
+    Serial.print(TipoGrausCodes[AirConditionerEstateViewModel.DegreesMode]);
     Serial.println("");
 
     Serial.print("Timer: ");
-    Serial.print(Timer);
+    Serial.print(AirConditionerEstateViewModel.SleepOnOff);
     Serial.print(" ............. Bin: ");
-    Serial.print(TimerCodes[Timer]);
+    Serial.print(TimerCodes[AirConditionerEstateViewModel.SleepOnOff]);
     Serial.println("");
 
     Serial.print("EndProtocol: ");
@@ -65,17 +66,17 @@ void AirConditioner::PrintEstadoAtual()
     Serial.print(EndProtocolCodes[EndProtocol]);
     Serial.println("");
 
-    Serial.print(ForcaVentiladorCodes[ForcaVentilador]);
+    Serial.print(ForcaVentiladorCodes[AirConditionerEstateViewModel.FanMode]);
     Serial.print(" ");
-    Serial.print(TemperaturaCodes[Temperatura]);
+    Serial.print(TemperaturaCodes[AirConditionerEstateViewModel.Degrees]);
     Serial.print(" ");
-    Serial.print(ModoTrabalhoCodes[ModoTrabalho]);
+    Serial.print(ModoTrabalhoCodes[AirConditionerEstateViewModel.CoolMode]);
     Serial.print(" ");
-    Serial.print(TempoTimerCodes[TempoTimer]);
+    Serial.print(TempoTimerCodes[AirConditionerEstateViewModel.SleepClock]);
     Serial.print(" ");
-    Serial.print(TipoGrausCodes[TipoGraus]);
+    Serial.print(TipoGrausCodes[AirConditionerEstateViewModel.DegreesMode]);
     Serial.print(" ");
-    Serial.print(TimerCodes[Timer]);
+    Serial.print(TimerCodes[AirConditionerEstateViewModel.SleepOnOff]);
     Serial.print(" ");
     Serial.println(EndProtocolCodes[EndProtocol]);
 
@@ -84,33 +85,20 @@ void AirConditioner::PrintEstadoAtual()
 
 void AirConditioner::SetParametrosDto(){
 
-    if (Ligado == true)
-    {
-        ParametrosDto[0] = 1;
-    }
-    else
-    {
-        ParametrosDto[0] = 0;
-    };
+    AirConditionerEstateDto = AirConditionerEstateViewModel;
 
-    ParametrosDto[1] = ForcaVentilador;
-    ParametrosDto[2] = Temperatura;
-    ParametrosDto[3] = ModoTrabalho;
-    ParametrosDto[4] = TempoTimer;
-    ParametrosDto[5] = TipoGraus;
-    ParametrosDto[6] = Timer;    
 };
 
 void AirConditioner::LigaDesliga()
 {
-    if (Ligado == true)
+    if (AirConditionerEstateViewModel.OnOff == 1)
     {
-        Ligado = false;
+        AirConditionerEstateViewModel.OnOff = 0;
         emissorIR.sendWhynter(StringToInt32(offCode), 32);
     }
     else
     {
-        Ligado = true;
+        AirConditionerEstateViewModel.OnOff = 1;
         emissorIR.sendWhynter(GetEstadoCode(), 32);
     };
 
@@ -121,13 +109,13 @@ void AirConditioner::AlteraForcaVentilador()
 {
     int arraySize = sizeof(ForcaVentiladorCodes) / sizeof(ForcaVentiladorCodes[0]);
 
-    if (ForcaVentilador >= (arraySize - 1))
+    if (AirConditionerEstateViewModel.FanMode >= (arraySize - 1))
     {
-        ForcaVentilador = 0;
+        AirConditionerEstateViewModel.FanMode = 0;
     }
     else
     {
-        ForcaVentilador += 1;
+        AirConditionerEstateViewModel.FanMode += 1;
     };
 
     SetParametrosDto();
@@ -136,7 +124,7 @@ void AirConditioner::AlteraForcaVentilador()
 void AirConditioner::AlteraTemperaturaAumentar()
 {
     //Se modo Ventilador temperatura "010110"
-    if (ModoTrabalho == 3)
+    if (AirConditionerEstateViewModel.CoolMode == 3)
     {
         SetParametrosDto();
         return;
@@ -144,7 +132,7 @@ void AirConditioner::AlteraTemperaturaAumentar()
 
     //Se modo Aquecer faixa de temperatura reduzida
     int arraySize;
-    if (ModoTrabalho == 4)
+    if (AirConditionerEstateViewModel.CoolMode == 4)
     {
         arraySize = 17;
     }
@@ -153,9 +141,9 @@ void AirConditioner::AlteraTemperaturaAumentar()
         arraySize = sizeof(TemperaturaCodes) / sizeof(TemperaturaCodes[0]);
     };
 
-    if (Temperatura < (arraySize - 1))
+    if (AirConditionerEstateViewModel.Degrees < (arraySize - 1))
     {
-        Temperatura += 1;
+        AirConditionerEstateViewModel.Degrees += 1;
     };
 
     SetParametrosDto();
@@ -164,7 +152,7 @@ void AirConditioner::AlteraTemperaturaAumentar()
 void AirConditioner::AlteraTemperaturaDiminuir()
 {
     //Se Modo Ventilador temperatura "010110"
-    if (ModoTrabalho == 3)
+    if (AirConditionerEstateViewModel.CoolMode == 3)
     {
         SetParametrosDto();
         return;
@@ -172,7 +160,7 @@ void AirConditioner::AlteraTemperaturaDiminuir()
 
     //Se modo Aquecer faixa de temperatura reduzida
     int arraySize;
-    if (ModoTrabalho == 4)
+    if (AirConditionerEstateViewModel.CoolMode == 4)
     {
         arraySize = 17;
     }
@@ -181,9 +169,9 @@ void AirConditioner::AlteraTemperaturaDiminuir()
         arraySize = sizeof(TemperaturaCodes) / sizeof(TemperaturaCodes[0]);
     };
 
-    if (Temperatura > 0)
+    if (AirConditionerEstateViewModel.Degrees > 0)
     {
-        Temperatura -= 1;
+        AirConditionerEstateViewModel.Degrees -= 1;
     };
 
     SetParametrosDto();
@@ -201,13 +189,13 @@ void AirConditioner::AlteraModoTrabalho()
 
     int arraySize = sizeof(ModoTrabalhoCodes) / sizeof(ModoTrabalhoCodes[0]);
 
-    if (ModoTrabalho >= (arraySize - 1))
+    if (AirConditionerEstateViewModel.CoolMode >= (arraySize - 1))
     {
-        ModoTrabalho = 0;
+        AirConditionerEstateViewModel.CoolMode = 0;
     }
     else
     {
-        ModoTrabalho += 1;
+        AirConditionerEstateViewModel.CoolMode += 1;
     };
 
     SetParametrosDto();
@@ -215,13 +203,13 @@ void AirConditioner::AlteraModoTrabalho()
 
 void AirConditioner::AlteraTimer()
 {
-    if (TempoTimer > 0)
+    if (AirConditionerEstateViewModel.SleepClock > 0)
     {
-        Timer = 1;
+        AirConditionerEstateViewModel.SleepOnOff = 1;
     }
     else
     {
-        Timer = 0;
+        AirConditionerEstateViewModel.SleepOnOff = 0;
     }
 };
 
@@ -229,9 +217,9 @@ void AirConditioner::AlteraTempoTimerAumentar()
 {
     int arraySize = sizeof(TempoTimerCodes) / sizeof(TempoTimerCodes[0]);
 
-    if (TempoTimer < (arraySize - 1))
+    if (AirConditionerEstateViewModel.SleepClock < (arraySize - 1))
     {
-        TempoTimer += 1;
+        AirConditionerEstateViewModel.SleepClock += 1;
     };
 
     AlteraTimer();
@@ -242,9 +230,9 @@ void AirConditioner::AlteraTempoTimerDiminuir()
 {
     int arraySize = sizeof(TempoTimerCodes) / sizeof(TempoTimerCodes[0]);
 
-    if (TempoTimer > 0)
+    if (AirConditionerEstateViewModel.SleepClock > 0)
     {
-        TempoTimer -= 1;
+        AirConditionerEstateViewModel.SleepClock -= 1;
     };
 
     AlteraTimer();
@@ -253,16 +241,7 @@ void AirConditioner::AlteraTempoTimerDiminuir()
 
 void AirConditioner::AlteraTipoGraus()
 {
-    TipoGraus == 0 ? TipoGraus = 1 : TipoGraus = 0;
-    // if (TipoGraus == 0)
-    // {
-    //     TipoGraus = 1;
-    // }
-    // else
-    // {
-    //     TipoGraus = 0;
-    // }
-
+    AirConditionerEstateViewModel.DegreesMode == 0 ? AirConditionerEstateViewModel.DegreesMode = 1 : AirConditionerEstateViewModel.DegreesMode = 0;
     SetParametrosDto();
 };
 
@@ -275,26 +254,26 @@ uint32_t AirConditioner::GetEstadoCode()
 {
 
     // Modo Inteligente
-    if (ModoTrabalho == 0 && TipoGraus == 0)
+    if (AirConditionerEstateViewModel.CoolMode == 0 && AirConditionerEstateViewModel.DegreesMode == 0)
     {
         return StringToInt32(inteligenteCodeCelsius);
     }
-    else if (ModoTrabalho == 0 && TipoGraus == 1)
+    else if (AirConditionerEstateViewModel.CoolMode == 0 && AirConditionerEstateViewModel.DegreesMode == 1)
     {
         return StringToInt32(inteligenteCodeFahrenheit);
     };
 
     // Modo Desumidificar
-    if (ModoTrabalho == 2 && TipoGraus == 0)
+    if (AirConditionerEstateViewModel.CoolMode == 2 && AirConditionerEstateViewModel.DegreesMode == 0)
     {
         return StringToInt32(desumidificarCodeCelsius);
     }
-    else if (ModoTrabalho == 2 && TipoGraus == 1)
+    else if (AirConditionerEstateViewModel.CoolMode == 2 && AirConditionerEstateViewModel.DegreesMode == 1)
     {
         return StringToInt32(desumidificarCodeFahrenheit);
     };
 
-    String parametroCompleto = ForcaVentiladorCodes[ForcaVentilador] + TemperaturaCodes[Temperatura] + ModoTrabalhoCodes[ModoTrabalho] + TempoTimerCodes[TempoTimer] + TipoGrausCodes[TipoGraus] + TimerCodes[Timer] + Adress + EndProtocolCodes[EndProtocol];
+    String parametroCompleto = ForcaVentiladorCodes[AirConditionerEstateViewModel.FanMode] + TemperaturaCodes[AirConditionerEstateViewModel.Degrees] + ModoTrabalhoCodes[AirConditionerEstateViewModel.CoolMode] + TempoTimerCodes[AirConditionerEstateViewModel.SleepClock] + TipoGrausCodes[AirConditionerEstateViewModel.DegreesMode] + TimerCodes[AirConditionerEstateViewModel.SleepOnOff] + Adress + EndProtocolCodes[EndProtocol];
     return StringToInt32(parametroCompleto);
 };
 
@@ -316,12 +295,12 @@ void AirConditioner::EnviaParametroIR(int endProtocolIndex)
     /*
         FAZER FOR NESSE MÉTODO, COMPARAR MODO PARA ENVIAR CÓDIGO FIXO
     */
-    if (!Ligado)
+    if (AirConditionerEstateViewModel.OnOff == 0)
     {
         LigaDesliga();
     }
 
-    if (ModoTrabalho == 0 || ModoTrabalho == 2)
+    if (AirConditionerEstateViewModel.CoolMode == 0 || AirConditionerEstateViewModel.CoolMode == 2)
     {
         emissorIR.sendWhynter(GetEstadoCode(), 32);
         return;

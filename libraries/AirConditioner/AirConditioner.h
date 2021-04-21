@@ -3,12 +3,13 @@
 
 #include "Arduino.h"
 #include "IRremote.h"
+#include "AirConditionerEstateModel.h"
 
 
 class AirConditioner {
     public:
         AirConditioner();   
-        void Init(int forcaVentilador, int temperatura, int modoTrabalho, int tempoTimer, int tipoGraus, int timer);
+        void Init();
 
         void PrintEstadoAtual();       
         void LigaDesliga();
@@ -21,7 +22,7 @@ class AirConditioner {
         void AlteraTipoGraus();       
         void AlteraEndProtocol(int endProtocolIndex);
         void EnviaParametroIR(int endProtocolIndex = -1);
-        int ParametrosDto[7]; // Ligado, ForcaVentilador, Temperatura, ModoTrabalho, TempoTimer, TipoGraus, Timer
+        AirConditionerEstateModel AirConditionerEstateDto;
 
     private:        
         void AlteraTimer();
@@ -45,13 +46,7 @@ class AirConditioner {
         String inteligenteCodeCelsius = "11101011100000000000101010101010"; //0xEB800AAA
         String inteligenteCodeFahrenheit = "11101011100000000010101010101000"; //0xEB800AAA
 
-        bool Ligado = true;
-        int ForcaVentilador;
-        int Temperatura;
-        int ModoTrabalho;
-        int TempoTimer;
-        int TipoGraus;
-        int Timer;
+        AirConditionerEstateModel AirConditionerEstateViewModel;
         String Adress = "10101010"; // Padrão em todo código => Possível Adress
         int EndProtocol;
 };

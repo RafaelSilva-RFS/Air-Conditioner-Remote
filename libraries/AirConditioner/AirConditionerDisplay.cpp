@@ -3,7 +3,7 @@
 
 AirConditionerDisplay::AirConditionerDisplay(){ };
 
-void AirConditionerDisplay::Init(Adafruit_SSD1306 _display, int ParametrosDto[7]){ 
+void AirConditionerDisplay::Init(Adafruit_SSD1306 _display, AirConditionerEstateModel AirConditionerEstateDto){ 
 
     display = _display;    
 
@@ -14,65 +14,65 @@ void AirConditionerDisplay::Init(Adafruit_SSD1306 _display, int ParametrosDto[7]
     // Clear the buffer
     display.clearDisplay();    
 
-    DisplayUpdate(ParametrosDto);
+    DisplayUpdate(AirConditionerEstateDto);
     // DrawClock(10, 33);
 
     display.display();
 };
 
-void AirConditionerDisplay::DisplayUpdate(int ParametrosDto[7]){    
+void AirConditionerDisplay::DisplayUpdate(AirConditionerEstateModel AirConditionerEstateDto){    
 
     //On/Off
-    if(ParametrosDto[0] != ParametrosAnterioresDto[0] && ParametrosDto[0] == 0) {
+    if(AirConditionerEstateDto.OnOff != AirConditionerPreviousEstateDto.OnOff && AirConditionerEstateDto.OnOff == 0) {
         display.clearDisplay();
         display.display();
-        ParametrosAnterioresDto[0] = ParametrosDto[0];
+        AirConditionerPreviousEstateDto.OnOff = AirConditionerEstateDto.OnOff;
         return;
-    } else if(ParametrosDto[0] != ParametrosAnterioresDto[0] && ParametrosDto[0] == 1) {
+    } else if(AirConditionerEstateDto.OnOff != AirConditionerPreviousEstateDto.OnOff && AirConditionerEstateDto.OnOff == 1) {
         display.clearDisplay();
-        DrawDegrees(ParametrosDto[2], ParametrosDto[5]);
-        DrawTemperatureMode(ParametrosDto[5]);
-        DrawCoolMode(ParametrosDto[3]);
-        DrawFanMode(ParametrosDto[1]);
-        DrawSleepMode(ParametrosDto[4]);
-        ParametrosAnterioresDto[0] = ParametrosDto[0];
-        ParametrosAnterioresDto[1] = ParametrosDto[1];
-        ParametrosAnterioresDto[2] = ParametrosDto[2];
-        ParametrosAnterioresDto[3] = ParametrosDto[3];
-        ParametrosAnterioresDto[4] = ParametrosDto[4];
-        ParametrosAnterioresDto[5] = ParametrosDto[5];
+        DrawDegrees(AirConditionerEstateDto.Degrees, AirConditionerEstateDto.DegreesMode);
+        DrawTemperatureMode(AirConditionerEstateDto.DegreesMode);
+        DrawCoolMode(AirConditionerEstateDto.CoolMode);
+        DrawFanMode(AirConditionerEstateDto.FanMode);
+        DrawSleepMode(AirConditionerEstateDto.SleepClock);
+        AirConditionerPreviousEstateDto.OnOff = AirConditionerEstateDto.OnOff;
+        AirConditionerPreviousEstateDto.FanMode = AirConditionerEstateDto.FanMode;
+        AirConditionerPreviousEstateDto.Degrees = AirConditionerEstateDto.Degrees;
+        AirConditionerPreviousEstateDto.CoolMode = AirConditionerEstateDto.CoolMode;
+        AirConditionerPreviousEstateDto.SleepClock = AirConditionerEstateDto.SleepClock;
+        AirConditionerPreviousEstateDto.DegreesMode = AirConditionerEstateDto.DegreesMode;
         return;
     };
 
     // DrawDegrees
-    if(ParametrosDto[2] != ParametrosAnterioresDto[2]) {
-        DrawDegrees(ParametrosDto[2], ParametrosDto[5]);
-        ParametrosAnterioresDto[2] = ParametrosDto[2];
+    if(AirConditionerEstateDto.Degrees != AirConditionerPreviousEstateDto.Degrees) {
+        DrawDegrees(AirConditionerEstateDto.Degrees, AirConditionerEstateDto.DegreesMode);
+        AirConditionerPreviousEstateDto.Degrees = AirConditionerEstateDto.Degrees;
     };
 
     // DrawTemperatureMode
-    if(ParametrosDto[5] != ParametrosAnterioresDto[5]) {
-        DrawTemperatureMode(ParametrosDto[5]);
-        DrawDegrees(ParametrosDto[2], ParametrosDto[5]);
-        ParametrosAnterioresDto[5] = ParametrosDto[5];
+    if(AirConditionerEstateDto.DegreesMode != AirConditionerPreviousEstateDto.DegreesMode) {
+        DrawTemperatureMode(AirConditionerEstateDto.DegreesMode);
+        DrawDegrees(AirConditionerEstateDto.Degrees, AirConditionerEstateDto.DegreesMode);
+        AirConditionerPreviousEstateDto.DegreesMode = AirConditionerEstateDto.DegreesMode;
     };
 
     // DrawCoolMode
-    if(ParametrosDto[3] != ParametrosAnterioresDto[3]) {
-        DrawCoolMode(ParametrosDto[3]);
-        ParametrosAnterioresDto[3] = ParametrosDto[3];
+    if(AirConditionerEstateDto.CoolMode != AirConditionerPreviousEstateDto.CoolMode) {
+        DrawCoolMode(AirConditionerEstateDto.CoolMode);
+        AirConditionerPreviousEstateDto.CoolMode = AirConditionerEstateDto.CoolMode;
     };
 
     // DrawFanMode
-    if(ParametrosDto[1] != ParametrosAnterioresDto[1]) {
-        DrawFanMode(ParametrosDto[1]);
-        ParametrosAnterioresDto[1] = ParametrosDto[1];
+    if(AirConditionerEstateDto.FanMode != AirConditionerPreviousEstateDto.FanMode) {
+        DrawFanMode(AirConditionerEstateDto.FanMode);
+        AirConditionerPreviousEstateDto.FanMode = AirConditionerEstateDto.FanMode;
     };
 
     // DrawSleepMode
-    if(ParametrosDto[4] != ParametrosAnterioresDto[4]) {
-        DrawSleepMode(ParametrosDto[4]);
-        ParametrosAnterioresDto[4] = ParametrosDto[4];
+    if(AirConditionerEstateDto.SleepClock != AirConditionerPreviousEstateDto.SleepClock) {
+        DrawSleepMode(AirConditionerEstateDto.SleepClock);
+        AirConditionerPreviousEstateDto.SleepClock = AirConditionerEstateDto.SleepClock;
     };    
     
 };
